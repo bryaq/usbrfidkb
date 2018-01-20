@@ -1,5 +1,6 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <avr/wdt.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -183,8 +184,11 @@ cdcpoll(void)
 			state = CDC_STATE_REBOOT;
 		break;
 	case CDC_STATE_REBOOT:
-		if(print == NULL)
+		wdt_reset();
+		if(print == NULL){
+			wdt_enable(WDTO_15MS);
 			print = (char *)reboot;
+		}
 		break;
 	}
 	if(usbInterruptIsReady()){
