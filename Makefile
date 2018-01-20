@@ -19,7 +19,8 @@ fuse:
 	avrdude -p $(CPU) -c usbtiny -U hfuse:w:0xc1:m -U lfuse:w:0x1f:m
 
 prog:	$(NAME).hex
-	avrdude -p $(CPU) -c usbtiny -U flash:w:$(NAME).hex:i
+	avrdude -p $(CPU) -c dapa -i 4 -U flash:w:$(NAME).hex:i
+	avrdude -p $(CPU) -c dapa -i 4 -U lock:w:0x3c:m
 
 $(NAME).hex:	$(NAME).elf
 	avr-objcopy -j .text -j .data -O ihex $(NAME).elf $(NAME).hex

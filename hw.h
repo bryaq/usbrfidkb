@@ -11,5 +11,7 @@
 enum{
 	EVENT_COMP =	1 << 0,
 	EVENT_TIMER =	1 << 1,
+	EVENT_DETECT =	1 << 2,
+	EVENT_USB =	1 << 3,
 };
 __extension__ volatile register uchar events asm("r16");

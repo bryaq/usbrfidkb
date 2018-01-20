@@ -321,6 +321,15 @@ usbFunctionWrite(uchar *data, uchar len)
 void
 usbFunctionWriteOut(uchar *data, uchar len)
 {
-	if(*data == '1')
-		led_off();
+	uchar i;
+	
+	for(i = 0; i < HW_CDC_BULK_SIZE; i++){
+		if(i < len)
+			pbuf[i] = data[i];
+		else{
+			pbuf[i] = '\0';
+			break;
+		}
+	}
+	events |= EVENT_USB;
 }

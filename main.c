@@ -1,3 +1,4 @@
+#include <avr/eeprom.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/sleep.h>
@@ -17,8 +18,8 @@
 
 volatile static ushort t;
 volatile static uchar out, wait;
-static const uchar userid[] = {0x27, 0x00, 0x83, 0xd1, 0x9f};
-static const char *hello = "Hello, World!!!11\n";
+static uchar userid[5];
+static char pwd[16];
 
 enum{
 	COMP_STATE_STOP,
@@ -80,9 +81,11 @@ comp_handle(void)
 						state = COMP_STATE_STOP;
 						break;
 					}
+					events |= EVENT_DETECT;
+					memcpy(detected, id , 5);
 					if(memcmp(id, userid, 5) == 0){
 						if(wait == 0)
-							typing = (char *)hello;
+							typing = pwd;
 						wait = 255;
 					}
 					state = COMP_STATE_STOP;
@@ -153,12 +156,17 @@ main(void)
 		mode = MODE_KBD;
 	if(mode == MODE_CDC)
 		led_on();
+	else{
+		eeprom_read_block(userid, 0, sizeof(userid));
+		eeprom_read_block(pwd, (void *)sizeof(userid), sizeof(pwd));
+	}
 	
 	usbDeviceDisconnect();
 	while(--i)
 		_delay_ms(1);
 	usbDeviceConnect();
 	usbInit();
+	events = 0;
 	sei();
 	
 	set_sleep_mode(SLEEP_MODE_IDLE);
