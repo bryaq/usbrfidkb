@@ -16,7 +16,7 @@ $(NAME).elf:	$(OBJS)
 	avr-size $@
 
 fuse:
-	avrdude -p $(CPU) -c usbtiny -U hfuse:w:0xc1:m -U lfuse:w:0x1f:m
+	avrdude -p $(CPU) -c dapa -i 4 -e -U hfuse:w:0xc9:m -U lfuse:w:0x1f:m
 
 prog:	$(NAME).hex
 	avrdude -p $(CPU) -c dapa -i 4 -U flash:w:$(NAME).hex:i
